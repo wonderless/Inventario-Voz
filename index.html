@@ -6,7 +6,7 @@
     <title>Inventario por Voz</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color:beige ;}
-        #producto, #precio { font-size: 1.5em; margin: 10px; }
+        #producto, #precio, #textoCaptado { font-size: 1.5em; margin: 10px; }
         button { padding: 10px 20px; font-size: 1em; }
         
     </style>
@@ -17,16 +17,18 @@
     <button id="botonEscucha" onclick="iniciarReconocimiento()">Decir Producto</button>
     <div id="producto">Producto: </div>
     <div id="precio">Precio: </div>
+    <div id="textoCaptado">Lo que dijiste: </div>
 
     <script>
         // Array de productos en el inventario
         const inventario = [
             { nombre: 'galleta oreo', precio: 1.5 },
             { nombre: 'papas lays', precio: 1.0 },
-            { nombre: 'coca cola', precio: 2.5 },
+            { nombre: 'coca-cola', precio: 2.5 },
             { nombre: 'chicle', precio: 2.5 },
             { nombre: 'doritos', precio: 2.5 },
-            { nombre: 'piqueos', precio: 2.5 }
+            { nombre: 'piqueos', precio: 2.5 },
+            { nombre: 'takis', precio: 2.5 },
         ];
 
         // Función para iniciar el reconocimiento de voz
@@ -47,6 +49,9 @@
             reconocimiento.onresult = (event) => {
                 const speechText = event.results[0][0].transcript.toLowerCase();
                 const productoEncontrado = inventario.find(item => item.nombre === speechText);
+
+                // Muestra lo que el usuario dijo
+                document.getElementById('textoCaptado').textContent = `Lo que dijiste: ${speechText}`;
 
                 if (productoEncontrado) {
                     document.getElementById('producto').textContent = `Producto: ${productoEncontrado.nombre}`;
