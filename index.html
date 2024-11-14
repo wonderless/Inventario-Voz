@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inventario por Voz</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color:beige ;}
-        #producto, #precio, #textoCaptado { font-size: 1.5em; margin: 10px; }
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: beige; }
+        #productos { font-size: 1.5em; margin: 10px; }
         button { padding: 10px 20px; font-size: 1em; margin: 10px; }
     </style>
 </head>
@@ -15,20 +15,24 @@
     <h1>Inventario de Tienda</h1>
     <button id="botonEscucha" onclick="iniciarReconocimiento()">Decir Producto</button>
     <button id="botonDetener" onclick="detenerReconocimiento()" style="display: none;">Detener</button>
-    <div id="producto">Producto(s): </div>
-    <div id="precio">Precio(s): </div>
+    <div id="productos">Producto(s): </div>
     <div id="textoCaptado">Lo que dijiste: </div>
 
     <script>
         // Array de productos en el inventario
         const inventario = [
             { nombre: 'pepsi chicha', precio: 1.5 },
-            { nombre: 'pepsi grande', precio: 2.0 },
-            { nombre: 'coca cola', precio: 2.5 },
-            { nombre: 'chicle', precio: 1.0 },
-            { nombre: 'doritos', precio: 2.5 },
-            { nombre: 'piqueos', precio: 3.0 },
+            { nombre: 'pepsi grande 1litro', precio: 3.5 },
+            { nombre: 'pepsi grande 1.5litro', precio: 4.8 },
+            { nombre: 'pepsi grande 2litro', precio: 6.8 },
+            { nombre: 'coca-cola personal', precio: 3 },
+            { nombre: 'chicle chiste', precio: 0.2 },
+            { nombre: 'doritos', precio: 2.0 },
+            { nombre: 'piqueos', precio: 2.0 },
             { nombre: 'takis', precio: 2.5 },
+            { nombre: 'frugos', precio: 2.0 },
+            { nombre: 'yogurt chico', precio: 2 },
+            { nombre: 'yogurt grande', precio: 2 },
         ];
 
         let reconocimiento;  // Variable global para el reconocimiento de voz
@@ -59,17 +63,13 @@
 
                 if (productosEncontrados.length > 0) {
                     let productosHTML = '';
-                    let preciosHTML = '';
                     productosEncontrados.forEach(producto => {
-                        productosHTML += `<div>${producto.nombre}</div>`;
-                        preciosHTML += `<div>$${producto.precio}</div>`;
+                        productosHTML += `<div>${producto.nombre} - $${producto.precio}</div>`;
                     });
 
-                    document.getElementById('producto').innerHTML = `Producto(s): ${productosHTML}`;
-                    document.getElementById('precio').innerHTML = `Precio(s): ${preciosHTML}`;
+                    document.getElementById('productos').innerHTML = `Producto(s): <br>${productosHTML}`;
                 } else {
-                    document.getElementById('producto').textContent = `Producto no encontrado`;
-                    document.getElementById('precio').textContent = '';
+                    document.getElementById('productos').textContent = `Producto no encontrado`;
                 }
 
                 boton.textContent = 'Decir Producto'; // Restaura el texto del botón
