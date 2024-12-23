@@ -1,101 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inventario por Voz</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; background-color: beige; }
-        #productos { font-size: 1.5em; margin: 10px; }
-        button { padding: 10px 20px; font-size: 1em; margin: 10px; }
+      body {
+        font-family: Arial, sans-serif;
+        text-align: center;
+        margin-top: 50px;
+        background-color: beige;
+      }
+      #productos,
+      #nuevoProducto,
+      #eliminarProducto {
+        font-size: 1.5em;
+        margin: 20px;
+      }
+      table {
+        margin: 0 auto;
+        width: 80%;
+        border-collapse: collapse;
+        text-align: center;
+      }
+      th,
+      td {
+        border: 1px solid #000;
+        padding: 10px;
+      }
+      th {
+        background-color: #f2f2f2;
+      }
+      button,
+      input {
+        padding: 10px 20px;
+        font-size: 1em;
+        margin: 10px;
+      }
     </style>
-</head>
-<body>
-
+  </head>
+  <body>
     <h1>Inventario de Tienda</h1>
-    <button id="botonEscucha" onclick="iniciarReconocimiento()">Decir Producto</button>
-    <button id="botonDetener" onclick="detenerReconocimiento()" style="display: none;">Detener</button>
-    <div id="productos">Producto(s): </div>
-    <div id="textoCaptado">Lo que dijiste: </div>
 
-    <script>
-        // Array de productos en el inventario
-        const inventario = [
-            { nombre: 'pepsi chicha', precio: 1.5 },
-            { nombre: 'pepsi grande 1litro', precio: 3.5 },
-            { nombre: 'pepsi grande 1.5litro', precio: 4.8 },
-            { nombre: 'pepsi grande 2litro', precio: 6.8 },
-            { nombre: 'coca-cola personal', precio: 3 },
-            { nombre: 'chicle chiste', precio: 0.2 },
-            { nombre: 'doritos', precio: 2.0 },
-            { nombre: 'piqueos', precio: 2.0 },
-            { nombre: 'takis', precio: 2.5 },
-            { nombre: 'frugos', precio: 2.0 },
-            { nombre: 'yogurt chico', precio: 2 },
-            { nombre: 'yogurt grande', precio: 2 },
-        ];
+    <!-- Botones para buscar por voz -->
+    <button id="botonEscucha" onclick="iniciarReconocimiento()">
+      Decir Producto
+    </button>
+    <button
+      id="botonDetener"
+      onclick="detenerReconocimiento()"
+      style="display: none"
+    >
+      Detener
+    </button>
 
-        let reconocimiento;  // Variable global para el reconocimiento de voz
+    <!-- Tabla para mostrar productos -->
+    <div id="productos">
+      <table>
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Precio</th>
+          </tr>
+        </thead>
+        <tbody id="productosTabla">
+          <!-- Aquí se insertarán los productos dinámicamente -->
+        </tbody>
+      </table>
+    </div>
 
-        // Función para iniciar el reconocimiento de voz
-        function iniciarReconocimiento() {
-            const boton = document.getElementById('botonEscucha');
-            const botonDetener = document.getElementById('botonDetener');
-            boton.textContent = 'Escuchando...'; // Cambia el texto del botón
-            botonDetener.style.display = 'inline'; // Muestra el botón "Detener"
+    <!-- Mensaje de reconocimiento de voz -->
+    <div id="textoCaptado">Lo que dijiste:</div>
 
-            if (!('webkitSpeechRecognition' in window)) {
-                alert('La API de reconocimiento de voz no es compatible con este navegador.');
-                return;
-            }
+    <!-- Formulario para agregar productos -->
+    <h2>Agregar Nuevo Producto</h2>
+    <div id="nuevoProducto">
+      <input
+        type="text"
+        id="nombreProducto"
+        placeholder="Nombre del Producto"
+      />
+      <input
+        type="number"
+        id="precioProducto"
+        placeholder="Precio del Producto"
+      />
+      <button onclick="agregarProducto()">Agregar Producto</button>
+    </div>
 
-            reconocimiento = new webkitSpeechRecognition();
-            reconocimiento.lang = 'es-PE';
-            reconocimiento.interimResults = false;
-            reconocimiento.maxAlternatives = 1;
+    <!-- Formulario para eliminar productos -->
+    <h2>Eliminar Producto</h2>
+    <div id="eliminarProducto">
+      <input
+        type="text"
+        id="nombreEliminar"
+        placeholder="Nombre del Producto a Eliminar"
+      />
+      <button onclick="eliminarProducto()">Eliminar Producto</button>
+    </div>
 
-            reconocimiento.onresult = (event) => {
-                const speechText = event.results[0][0].transcript.toLowerCase();
-                document.getElementById('textoCaptado').textContent = `Lo que dijiste: ${speechText}`;
-
-                // Filtrar productos que contengan la palabra clave
-                const productosEncontrados = inventario.filter(item => item.nombre.includes(speechText));
-
-                if (productosEncontrados.length > 0) {
-                    let productosHTML = '';
-                    productosEncontrados.forEach(producto => {
-                        productosHTML += `<div>${producto.nombre} - $${producto.precio}</div>`;
-                    });
-
-                    document.getElementById('productos').innerHTML = `Producto(s): <br>${productosHTML}`;
-                } else {
-                    document.getElementById('productos').textContent = `Producto no encontrado`;
-                }
-
-                boton.textContent = 'Decir Producto'; // Restaura el texto del botón
-            };
-
-            reconocimiento.onerror = (error) => {
-                console.error('Error en el reconocimiento:', error);
-                alert('Error en el reconocimiento de voz.');
-                boton.textContent = 'Decir Producto'; // Restaura el texto del botón en caso de error
-            };
-
-            reconocimiento.onend = () => {
-                boton.textContent = 'Decir Producto'; // Restaura el texto del botón cuando termina de escuchar
-            };
-
-            reconocimiento.start();
-        }
-
-        // Función para detener el reconocimiento
-        function detenerReconocimiento() {
-            if (reconocimiento) {
-                reconocimiento.stop();  // Detiene el reconocimiento de voz
-                document.getElementById('botonEscucha').textContent = 'Decir Producto';  // Restaura el texto del botón
-                document.getElementById('botonDetener').style.display = 'none';  // Oculta el botón "Detener"
-            }
-        }
-    </script>
-</body>
+    <script type="module" src="app.js"></script>
+  </body>
 </html>
